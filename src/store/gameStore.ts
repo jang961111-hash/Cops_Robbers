@@ -12,11 +12,12 @@ interface GameState {
   players: Player[];
   geofence: GeofenceSetting;
   toasts: ToastMessage[];
-  activeTab: 'map' | 'jail' | 'rules' | 'profile';
+  activeTab: 'map' | 'safety' | 'rules' | 'profile';
   showDevPanel: boolean;
   selectedPlayerId?: string;
   arrestRequest?: ArrestRequest;
   outOfBounds: boolean;
+  gameStarting: boolean; // 게임 시작 트랜지션 표시 여부
   actions: {
     setRole: (role: Role) => void;
     setTeam: (team: Team) => void;
@@ -32,6 +33,8 @@ interface GameState {
     clearToast: (id: string) => void;
     updateWarning: (key: keyof GeofenceSetting['warnings']) => void;
     updateNickname: (name: string) => void;
+    startGame: () => void; // 게임 시작
+    completeGameStart: () => void; // 트랜지션 완료
   };
 }
 
@@ -48,6 +51,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   selectedPlayerId: undefined,
   arrestRequest: undefined,
   outOfBounds: false,
+  gameStarting: false,
   actions: {
     setRole: (role) => set({ role }),
     setTeam: (team) => set({ team }),
@@ -150,6 +154,8 @@ export const useGameStore = create<GameState>((set, get) => ({
         players: state.players.map((player) =>
           player.id === state.meId ? { ...player, name } : player
         )
-      }))
+      })),
+    startGame: () => set({ gameStarting: true }),
+    completeGameStart: () => set({ gameStarting: false })
   }
 }));

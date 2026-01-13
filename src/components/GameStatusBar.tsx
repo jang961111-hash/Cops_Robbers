@@ -1,13 +1,18 @@
 import clsx from 'clsx';
 import { useGameStore } from '../store/gameStore';
+import { getRoleUIClasses } from '../utils/roleConfig';
 
 const GameStatusBar = () => {
-  const { players, team, outOfBounds } = useGameStore();
+  const { players, team, role, outOfBounds } = useGameStore();
+  const roleConfig = getRoleUIClasses(role);
   const aliveCount = players.filter((player) => player.team === team && player.status === 'alive').length;
   const jailedCount = players.filter((player) => player.team === team && player.status === 'jailed').length;
 
   return (
-    <div className="px-4 py-3 bg-slate-900 text-white text-xs flex items-center justify-between gap-2">
+    <div className={clsx(
+      'px-4 py-3 text-white text-xs flex items-center justify-between gap-2',
+      roleConfig.accentColor
+    )}>
       <div>
         <div className="text-[10px] text-slate-300">남은 시간</div>
         <div className="font-semibold">32:15</div>

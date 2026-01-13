@@ -5,34 +5,37 @@ const Onboarding = () => {
   const navigate = useNavigate();
 
   return (
-    <PhoneShell title="오프라인 추노 게임">
-      <div className="p-6 space-y-6">
-        <div className="bg-brand-50 border border-brand-100 rounded-2xl p-5">
-          <div className="text-sm text-brand-700 font-semibold">오늘의 게임 요약</div>
-          <p className="text-xs text-brand-700 mt-2">
-            팀별 위치 공유, 감옥 현황, 범위 경고를 실시간으로 관리하는 보조 앱입니다.
-          </p>
+    <PhoneShell title="SAFE-PLAY">
+      <div className="p-6 space-y-8">
+        {/* 히어로 섹션 */}
+        <div className="text-center py-8">
+          <div className="text-5xl mb-4">🚓</div>
+          <h1 className="text-2xl font-bold mb-2">경찰과 도둑</h1>
+          <p className="text-sm text-slate-500">실시간 위치 기반 게임</p>
         </div>
-        <div>
-          <h2 className="text-lg font-semibold">빠르게 시작하기</h2>
-          <p className="text-sm text-slate-500 mt-2">
-            오프라인 게임에 참여하려면 게스트 또는 소셜 로그인으로 시작하세요.
-          </p>
+
+        {/* 역할 소개 */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 text-center">
+            <div className="text-3xl mb-2">👮</div>
+            <div className="font-bold text-blue-700">경찰</div>
+            <div className="text-xs text-blue-600 mt-1">추적 · 체포</div>
+          </div>
+          <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 text-center">
+            <div className="text-3xl mb-2">🏃</div>
+            <div className="font-bold text-red-700">도둑</div>
+            <div className="text-xs text-red-600 mt-1">회피 · 생존</div>
+          </div>
         </div>
+
+        {/* 시작 버튼 */}
         <div className="space-y-3">
           <button
             type="button"
             onClick={() => navigate('/home')}
-            className="w-full py-3 rounded-2xl bg-brand-500 text-white font-semibold"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-lg shadow-lg"
           >
-            게스트로 시작
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/home')}
-            className="w-full py-3 rounded-2xl border border-slate-200 text-slate-600 font-semibold"
-          >
-            소셜 로그인 (더미)
+            🎮 게임 시작
           </button>
         </div>
       </div>

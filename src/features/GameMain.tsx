@@ -2,7 +2,7 @@ import { useGameStore } from '../store/gameStore';
 import GameStatusBar from '../components/GameStatusBar';
 import TabBar from '../components/TabBar';
 import MapTab from './tabs/MapTab';
-import JailTab from './tabs/JailTab';
+import SafetyTab from './tabs/SafetyTab';
 import RulesTab from './tabs/RulesTab';
 import ProfileTab from './tabs/ProfileTab';
 import ToastStack from '../components/ToastStack';
@@ -21,7 +21,7 @@ const GameMain = () => {
         <GameStatusBar />
         <div className="flex-1 overflow-y-auto">
           {activeTab === 'map' && <MapTab />}
-          {activeTab === 'jail' && <JailTab />}
+          {activeTab === 'safety' && <SafetyTab />}
           {activeTab === 'rules' && <RulesTab />}
           {activeTab === 'profile' && <ProfileTab />}
         </div>

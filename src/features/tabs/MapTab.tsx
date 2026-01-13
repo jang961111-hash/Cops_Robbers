@@ -2,11 +2,18 @@ import { useState } from 'react';
 import MapDummy from '../../components/MapDummy';
 import { useGameStore } from '../../store/gameStore';
 import { Player } from '../../types/game';
+import { getRoleUIClasses, canSeePolicePositions } from '../../utils/roleConfig';
 
 const MapTab = () => {
-  const { players, team, actions } = useGameStore();
+  const { players, team, role, actions } = useGameStore();
   const [shareMode, setShareMode] = useState('구역 공유');
+  const roleConfig = getRoleUIClasses(role);
   const teamPlayers = players.filter((player) => player.team === team);
+
+  // 도둑인 경우 경찰 위치 숨김
+  const visiblePlayers = canSeePolicePositions(role)
+    ? teamPlayers
+    : teamPlayers.filter((p) => p.team === 'robber');
 
   const selectPlayer = (player: Player) => {
     actions.selectPlayer(player.id);
@@ -14,15 +21,15 @@ const MapTab = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
+      <div className={`${roleConfig.bgColor} rounded-2xl border ${roleConfig.borderColor} p-4 space-y-3`}>
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs text-slate-400">팀 전용 맵</div>
-            <div className="text-sm font-semibold">{team === 'cop' ? '경찰' : '도둑'} 위치 공유</div>
+            <div className="text-sm font-semibold">{role === 'cop' ? '경찰' : '도둑'} 위치 공유</div>
           </div>
-          <span className="text-xs bg-brand-50 text-brand-600 px-2 py-1 rounded-full">실시간</span>
+          <span className={`text-xs ${roleConfig.textColor} ${roleConfig.bgColor} px-2 py-1 rounded-full`}>실시간</span>
         </div>
-        <MapDummy players={teamPlayers} highlightTeam={team} />
+        <MapDummy players={visiblePlayers} highlightTeam={team} />
         <div>
           <div className="text-xs text-slate-400 mb-2">위치 공유 방식</div>
           <div className="flex gap-2">
@@ -33,7 +40,7 @@ const MapTab = () => {
                 onClick={() => setShareMode(mode)}
                 className={
                   shareMode === mode
-                    ? 'flex-1 text-xs py-2 rounded-xl bg-brand-500 text-white'
+                    ? `flex-1 text-xs py-2 rounded-xl ${roleConfig.accentColor} text-white`
                     : 'flex-1 text-xs py-2 rounded-xl border border-slate-200 text-slate-500'
                 }
               >
@@ -46,16 +53,16 @@ const MapTab = () => {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div className="text-sm font-semibold">팀원 카드</div>
-          <button type="button" className="text-xs text-brand-600">
+          <button type="button" className={`text-xs ${roleConfig.textColor}`}>
             전체 보기
           </button>
         </div>
-        {teamPlayers.map((player) => (
+        {visiblePlayers.map((player) => (
           <button
             type="button"
             key={player.id}
             onClick={() => selectPlayer(player)}
-            className="w-full text-left border border-slate-200 rounded-2xl px-4 py-3 flex items-center justify-between"
+            className={`w-full text-left border ${roleConfig.borderColor} rounded-2xl px-4 py-3 flex items-center justify-between ${roleConfig.bgColor}`}
           >
             <div>
               <div className="text-sm font-semibold">{player.name}</div>

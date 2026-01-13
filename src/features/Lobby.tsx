@@ -1,65 +1,103 @@
 import { useNavigate } from 'react-router-dom';
 import PhoneShell from '../components/PhoneShell';
 import { useGameStore } from '../store/gameStore';
+import GameStartTransition from '../components/GameStartTransition';
 
 const Lobby = () => {
   const navigate = useNavigate();
-  const { players, roomCode } = useGameStore();
+  const { players, roomCode, role, gameStarting, actions } = useGameStore();
+  const copCount = players.filter((p) => p.team === 'cop').length;
+  const robberCount = players.filter((p) => p.team === 'robber').length;
+
+  const handleStartGame = () => {
+    actions.startGame();
+    // 트랜지션 후 게임 화면으로 이동
+    setTimeout(() => {
+      navigate('/game');
+    }, 4000); // 3초 카운트다운 + 1초 메시지
+  };
 
   return (
-    <PhoneShell title="방 대기실">
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-xs text-slate-400">방 코드</div>
-            <div className="text-lg font-semibold">{roomCode}</div>
-          </div>
-          <button type="button" className="text-xs text-brand-600 font-semibold">
-            공유하기
+    <>
+      <PhoneShell title="대기실">
+           <div className="p-6 space-y-6">
+        {/* 방 코드 */}
+        <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl p-5 text-white text-center">
+          <div className="text-xs opacity-80 mb-1">방 코드</div>
+          <div className="text-4xl font-bold font-mono tracking-wider">{roomCode}</div>
+          <button type="button" className="mt-3 text-sm opacity-90 underline">
+            📋 복사하기
           </button>
         </div>
-        <div className="space-y-3">
-          <div className="text-sm font-semibold">참가자 ({players.length})</div>
+
+        {/* 팀 현황 */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-center">
+            <div className="text-3xl mb-1">👮</div>
+            <div className="text-2xl font-bold text-blue-700">{copCount}</div>
+            <div className="text-xs text-blue-600">경찰</div>
+          </div>
+          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 text-center">
+            <div className="text-3xl mb-1">🏃</div>
+            <div className="text-2xl font-bold text-red-700">{robberCount}</div>
+            <div className="text-xs text-red-600">도둑</div>
+          </div>
+        </div>
+
+        {/* 참가자 목록 */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm font-bold text-slate-700">참가자 {players.length}</div>
+            <div className="flex gap-1">
+              {players.map((p) => (
+                <span key={p.id} className="text-lg">
+                  {p.team === 'cop' ? '👮' : '🏃'}
+                </span>
+              ))}
+            </div>
+          </div>
           <div className="space-y-2">
             {players.map((player) => (
               <div
                 key={player.id}
-                className="flex items-center justify-between border border-slate-200 rounded-xl px-4 py-3"
+                className={`flex items-center justify-between rounded-xl px-4 py-3 border-2 ${
+                  player.team === 'cop'
+                    ? 'bg-blue-50 border-blue-200'
+                    : 'bg-red-50 border-red-200'
+                }`}
               >
-                <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{player.team === 'cop' ? '👮' : '🏃'}</span>
                   <div className="font-semibold text-sm">{player.name}</div>
-                  <div className="text-xs text-slate-500">
-                    {player.team === 'cop' ? '경찰' : '도둑'} · {player.role === 'master' ? '마스터' : '플레이어'}
-                  </div>
                 </div>
-                <span className="text-xs text-emerald-600 font-semibold">준비 완료</span>
+                <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold">
+                  ✓ Ready
+                </span>
               </div>
             ))}
           </div>
         </div>
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-          <div className="text-sm font-semibold">팀 배정 결과</div>
-          <div className="mt-3 flex gap-3">
-            <div className="flex-1 rounded-xl bg-white border border-slate-200 px-3 py-2">
-              <div className="text-xs text-slate-400">경찰</div>
-              <div className="font-semibold">{players.filter((player) => player.team === 'cop').length}명</div>
-            </div>
-            <div className="flex-1 rounded-xl bg-white border border-slate-200 px-3 py-2">
-              <div className="text-xs text-slate-400">도둑</div>
-              <div className="font-semibold">{players.filter((player) => player.team === 'robber').length}명</div>
-            </div>
-          </div>
-        </div>
+
+        {/* 시작 버튼 */}
         <button
           type="button"
-          onClick={() => navigate('/game')}
-          className="w-full py-3 rounded-2xl bg-brand-500 text-white font-semibold"
+          onClick={handleStartGame}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-lg shadow-lg"
         >
-          준비 완료 · 게임 시작
+          🎮 게임 시작
         </button>
-      </div>
-    </PhoneShell>
-  );
+           </div>
+         </PhoneShell>
+
+    {/* 게임 시작 카운트다운 트랜지션 */}
+    {gameStarting && (
+         <GameStartTransition
+           role={role}
+           onComplete={() => actions.completeGameStart()}
+         />
+    )}
+       </>
+     );
 };
 
 export default Lobby;

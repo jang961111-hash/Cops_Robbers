@@ -2,10 +2,10 @@ import clsx from 'clsx';
 import { useGameStore } from '../store/gameStore';
 
 const tabs = [
-  { id: 'map', label: '맵' },
-  { id: 'jail', label: '감옥' },
-  { id: 'rules', label: '규칙/범위' },
-  { id: 'profile', label: '내 정보' }
+  { id: 'map', label: '🗺️ 맵' },
+  { id: 'safety', label: '🛡️ 안전' },
+  { id: 'rules', label: '📋 규칙' },
+  { id: 'profile', label: '👤 정보' }
 ] as const;
 
 const TabBar = () => {
